@@ -1,0 +1,8 @@
+{
+  "name": "docker-hub-webhook",
+  "version": "1.0",
+  "main": "app.js",
+  "dependencies": {
+    "express": "~4.9.5"
+  }
+}

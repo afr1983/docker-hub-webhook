@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+
+  docker-hub-webhook:
+    image: afreitas/docker-hub-webhook
+    container_name: docker-hub-webhook
+    ports:
+      - "8080:80/tcp"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/profile:/etc/profile"
+      - "/github/:/github"
