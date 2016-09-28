@@ -1,4 +1,10 @@
 #!/bin/bash
+
 source /etc/profile
-cd /srv/app
-node app.js
+
+npm install express \
+            slack-node \
+            kue \
+            body-parser
+
+exec supervisord -c ./supervisord.conf

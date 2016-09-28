@@ -7,6 +7,7 @@ services:
     container_name: docker-hub-webhook
     ports:
       - "8080:80/tcp"
+      - "6380:6379/tcp"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/profile:/etc/profile"

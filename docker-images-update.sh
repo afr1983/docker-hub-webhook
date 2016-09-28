@@ -2,5 +2,9 @@
 
 set -e
 
-docker-images-update callixmachine U8etUxUszAU7GJRV
-docker-start
+env
+#docker login callixmachine U8etUxUszAU7GJRV
+#docker pull $1
+#docker logoff
+
+#docker-start
