@@ -2,9 +2,8 @@
 
 set -e
 
-env
-#docker login callixmachine U8etUxUszAU7GJRV
-#docker pull $1
-#docker logoff
+docker login -u callixmachine -p U8etUxUszAU7GJRV
+docker pull $1
+docker logout
 
-#docker-start
+docker-start

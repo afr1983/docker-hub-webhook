@@ -21,13 +21,16 @@ function postSlack(uri, channel, message) {
 
 process.on('SIGTERM', function (sig) {
   queue.shutdown( 5000, function(err) {
-    console.log( 'Kue shutdown: ', err ||'' );
+    console.log( 'Worker - shutdown: ', err ||'' );
     process.exit( 0 );
   });
 });
 
+console.log("Worker - starting job processing");
+
 queue.process('update-server', function (job, done) {
   try {
+    console.log("Worker - starting job - " + job.data.image);
     var result = childProcess.execSync('/srv/app/docker-images-update.sh ' + job.data.image, {encoding: 'ASCII', env: process.env, shell: "/bin/bash"});
     console.log(result);
     postSlack(webhookUri_success, "#smartcenter2-errors", "Success updating server");
