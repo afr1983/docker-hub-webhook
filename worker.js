@@ -4,15 +4,12 @@ var kue = require('kue');
 
 var queue = kue.createQueue();
  
-var webhookUri_fail = "https://hooks.slack.com/services/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";
-var webhookUri_success = "https://hooks.slack.com/services/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";
-
-function postSlack(uri, channel, message) {
+function postSlack(channel, message) {
   var slackWebHook = new slack();
-  slackWebHook.setWebhook(uri);
+  slackWebHook.setWebhook("https://hooks.slack.com/services/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");
   slackWebHook.webhook({
-    channel: channel,
-    username: "docker-hub-webhook",
+    channel: "#smartcenter2-lab4",
+    username: "LAB4 Updater",
     text: message
   }, function(err, response) {
     console.log(response);
@@ -28,15 +25,35 @@ process.on('SIGTERM', function (sig) {
 
 console.log("Worker - starting job processing");
 
-queue.process('update-server', function (job, done) {
+queue.process('update-docker', function (job, done) {
   try {
-    console.log("Worker - starting job - " + job.data.image);
+    console.log("Update-Docker Worker - starting job - " + job.data.image);
     var result = childProcess.execSync('/srv/app/docker-images-update.sh ' + job.data.image, {encoding: 'ASCII', env: process.env, shell: "/bin/bash"});
-    console.log(result);
-    postSlack(webhookUri_success, "#smartcenter2-errors", "Success updating server");
+    console.log("Success - " + result);
+    var slackMsg = "Success updating docker image - " + job.data.image;
+    if (job.data.repo == "callix/sc2-rails") {
+      var result = childProcess.execSync('/srv/app/docker-get-rails-commit.sh');
+      slackMsg += " - https://github.com/callixbrasil/smartcenter2-infra/commit/" + result;
+    }
+    postSlack("#smartcenter2-errors", slackMsg);
     done();
   } catch (error) {
-    postSlack(webhookUri_fail, "#smartcenter2-errors", "Error when updating server - " + error);
+    console.log("Error - " + error);
+    postSlack("#smartcenter2-errors", "Error when updating docker image - " + error);
+    done(error);
+  }
+});
+
+queue.process('update-infra', function (job, done) {
+  try {
+    console.log("Update-Infra Worker - starting job - " + job.data.repo);
+    var result = childProcess.execSync('/srv/app/infra-github-pull.sh', {encoding: 'ASCII', env: process.env, shell: "/bin/bash"});
+    console.log("Success - " + result);
+    postSlack("#smartcenter2-errors", "Success updating " + job.data.repo + " - " + job.data.message + " - " + job.data.url);
+    done();
+  } catch (error) {
+    console.log("Error - " + error);
+    postSlack("#smartcenter2-errors", "Error when updating " + job.data.repo + " - " + error);
     done(error);
   }
 });

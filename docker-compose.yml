@@ -12,3 +12,4 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/profile:/etc/profile"
       - "/github/:/github"
+      - "/root/.ssh:/root/.ssh"
