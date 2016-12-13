@@ -33,7 +33,7 @@ queue.process('update-docker', function (job, done) {
     var slackMsg = "Success updating docker image - " + job.data.image;
     if (job.data.repo == "callix/sc2-rails") {
       var result = childProcess.execSync('/srv/app/docker-get-rails-commit.sh');
-      slackMsg += " - https://github.com/callixbrasil/smartcenter2-infra/commit/" + result;
+      slackMsg += " - https://github.com/callixbrasil/smartcenter2-rails/commit/" + result;
     }
     postSlack("#smartcenter2-errors", slackMsg);
     done();
